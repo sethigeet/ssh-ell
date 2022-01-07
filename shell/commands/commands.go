@@ -31,9 +31,17 @@ var Options = []prompt.Suggest{
 	{Text: "user", Description: "The user on the host to which you want to connect to"},
 }
 
-var conn ssh.Connection
+var conn = &ssh.Connection{}
+
+func init() {
+	conn.ApplyDefaults()
+}
 
 func Complete(d prompt.Document) []prompt.Suggest {
+	if d.TextBeforeCursor() == "" {
+		return prompt.FilterHasPrefix(Commands, d.GetWordBeforeCursor(), true)
+	}
+
 	switch strings.Split(d.TextBeforeCursor(), " ")[0] {
 	case "connect":
 		return (Connect{}).Complete(d)
@@ -49,24 +57,34 @@ func Complete(d prompt.Document) []prompt.Suggest {
 		return (Upload{}).Complete(d)
 	}
 
-	return prompt.FilterFuzzy(Commands, d.GetWordBeforeCursor(), true)
+	return prompt.FilterHasPrefix(Commands, d.GetWordBeforeCursor(), true)
 }
 
 func Execute(s string) {
+	s = strings.TrimSpace(s)
+	switch s {
+	case "":
+		return
+	case "quit", "exit":
+		color.New(color.FgBlue, color.Bold).Println("Byee!")
+		os.Exit(0)
+		return
+	}
+
 	cmd := strings.Split(s, " ")
 	switch cmd[0] {
 	case "connect":
 		(Help{}).Execute(cmd[1:]...)
 	case "download":
-		(Help{}).Execute(cmd[1:]...)
+		(Download{}).Execute(cmd[1:]...)
 	case "get":
-		(Help{}).Execute(cmd[1:]...)
+		(Get{}).Execute(cmd[1:]...)
 	case "help":
 		(Help{}).Execute(cmd[1:]...)
 	case "set":
-		(Help{}).Execute(cmd[1:]...)
+		(Set{}).Execute(cmd[1:]...)
 	case "upload":
-		(Help{}).Execute(cmd[1:]...)
+		(Upload{}).Execute(cmd[1:]...)
 	default:
 		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid command specified")
 		color.New(color.FgRed).Fprintln(os.Stderr, "Run `help` to see what commands you can run!")

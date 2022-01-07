@@ -8,7 +8,9 @@ require github.com/fatih/color v1.13.0
 
 require github.com/pkg/sftp v1.13.4
 
-require	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
+require golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
+
+require github.com/olekukonko/tablewriter v0.0.5
 
 require (
 	github.com/kr/fs v0.1.0 // indirect

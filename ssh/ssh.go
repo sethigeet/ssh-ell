@@ -2,6 +2,7 @@ package ssh
 
 import (
 	"fmt"
+	"os/user"
 	"time"
 
 	"github.com/pkg/sftp"
@@ -15,6 +16,8 @@ type Connection struct {
 	Timeout          time.Duration
 	AuthMethod       ssh.AuthMethod
 	IdentityFilePath string
+
+	AuthMethodCommonName string
 
 	sshClient  *ssh.Client
 	sftpClient *sftp.Client
@@ -37,4 +40,18 @@ func (c *Connection) Connect() error {
 
 func (c *Connection) Disconnect() error {
 	return c.sshClient.Close()
+}
+
+func (c *Connection) ApplyDefaults() error {
+	curr, err := user.Current()
+	if err != nil {
+		return err
+	}
+	c.User = curr.Username
+
+	c.Port = 22
+
+	c.Timeout = time.Millisecond * 5000
+
+	return nil
 }

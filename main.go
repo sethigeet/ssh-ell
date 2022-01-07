@@ -12,7 +12,7 @@ func main() {
 	err := shell.Setup()
 	if err != nil {
 		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "An error occurred!")
-		color.New(color.FgRed).Fprintf(os.Stderr, "error: %s", err)
+		color.New(color.FgRed).Fprintf(os.Stderr, "error: %s\n", err)
 		os.Exit(1)
 	}
 

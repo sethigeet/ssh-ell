@@ -4,9 +4,30 @@ package shell
 
 import (
 	"github.com/c-bata/go-prompt"
-	gpc "github.com/c-bata/go-prompt/completer"
+	"github.com/c-bata/go-prompt/completer"
 	"github.com/fatih/color"
+
+	"github.com/sethigeet/ssh-ell/shell/commands"
 )
+
+// InputOptions is the list of all the options that should be applied for the prompt
+var InputOptions = []prompt.Option{
+	prompt.OptionPrefix(config.PrefixString),
+	prompt.OptionPrefixTextColor(config.PrefixTextColor),
+	prompt.OptionTitle("ssh-ell"),
+	prompt.OptionAddKeyBind(keybindings...),
+	prompt.OptionCompletionWordSeparator(completer.FilePathCompletionSeparator), // need to set this for file path completion
+	prompt.OptionSuggestionBGColor(prompt.LightGray),
+	prompt.OptionSuggestionTextColor(prompt.Black),
+	prompt.OptionDescriptionBGColor(prompt.DarkGray),
+	prompt.OptionDescriptionTextColor(prompt.White),
+	prompt.OptionSelectedSuggestionBGColor(prompt.Blue),
+	prompt.OptionSelectedSuggestionTextColor(prompt.Black),
+	prompt.OptionSelectedDescriptionBGColor(prompt.Blue),
+	prompt.OptionSelectedDescriptionTextColor(prompt.Black),
+	prompt.OptionScrollbarBGColor(prompt.LightGray),
+	prompt.OptionScrollbarThumbColor(prompt.DarkGray),
+}
 
 var p *prompt.Prompt
 
@@ -17,25 +38,9 @@ func Setup() error {
 	}
 
 	p = prompt.New(
-		executor,
-		completer,
-
-		// Options
-		prompt.OptionPrefix(config.PrefixString),
-		prompt.OptionPrefixTextColor(config.PrefixTextColor),
-		prompt.OptionTitle("ssh-ell"),
-		prompt.OptionAddKeyBind(keybindings...),
-		prompt.OptionCompletionWordSeparator(gpc.FilePathCompletionSeparator), // need to set this for file path completion
-		prompt.OptionSuggestionBGColor(prompt.LightGray),
-		prompt.OptionSuggestionTextColor(prompt.Black),
-		prompt.OptionDescriptionBGColor(prompt.DarkGray),
-		prompt.OptionDescriptionTextColor(prompt.White),
-		prompt.OptionSelectedSuggestionBGColor(prompt.Blue),
-		prompt.OptionSelectedSuggestionTextColor(prompt.Black),
-		prompt.OptionSelectedDescriptionBGColor(prompt.Blue),
-		prompt.OptionSelectedDescriptionTextColor(prompt.Black),
-		prompt.OptionScrollbarBGColor(prompt.LightGray),
-		prompt.OptionScrollbarThumbColor(prompt.DarkGray),
+		commands.Execute,
+		commands.Complete,
+		InputOptions...,
 	)
 
 	return nil

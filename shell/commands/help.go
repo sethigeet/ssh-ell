@@ -28,7 +28,7 @@ func (Help) Complete(d prompt.Document) []prompt.Suggest {
 		return nil
 	}
 
-	return Commands
+	return prompt.FilterHasPrefix(Commands, d.GetWordBeforeCursor(), true)
 }
 
 func (Help) Execute(args ...string) {
