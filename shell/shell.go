@@ -19,6 +19,7 @@ func Setup() error {
 	p = prompt.New(
 		executor,
 		completer,
+
 		// Options
 		prompt.OptionPrefix(config.PrefixString),
 		prompt.OptionPrefixTextColor(config.PrefixTextColor),
@@ -41,8 +42,9 @@ func Setup() error {
 }
 
 func Run() {
+	// Print a header to greet the user
 	f := color.New(color.FgGreen, color.Bold)
-	f.Println(`
+	f.Printf(`
 
 ███████╗███████╗██╗  ██╗      ███████╗██╗     ██╗     
 ██╔════╝██╔════╝██║  ██║      ██╔════╝██║     ██║     
@@ -50,11 +52,13 @@ func Run() {
 ╚════██║╚════██║██╔══██║╚════╝██╔══╝  ██║     ██║     
 ███████║███████║██║  ██║      ███████╗███████╗███████╗
 ╚══════╝╚══════╝╚═╝  ╚═╝      ╚══════╝╚══════╝╚══════╝
-                                                      
+
 `)
 	f = color.New(color.Bold)
 	f.Println("Press Ctrl+D or type quit/exit to quit")
 	f.Println("Type help to get help info")
 	f.Println()
+
+	// Start the prompt
 	p.Run()
 }

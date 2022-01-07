@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/sethigeet/ssh-ell/shell/commands"
 )
 
 func executor(s string) {
@@ -16,4 +18,6 @@ func executor(s string) {
 		os.Exit(0)
 		return
 	}
+
+	commands.Execute(s)
 }
