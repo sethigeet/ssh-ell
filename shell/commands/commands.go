@@ -14,6 +14,7 @@ import (
 // Commands is the list of the commands supported by the shell package
 var Commands = []prompt.Suggest{
 	{Text: "connect", Description: "Connect using the set options"},
+	{Text: "disconnect", Description: "Disconnect from the ssh connection"},
 	{Text: "download", Description: "Download a file from the connected server"},
 	{Text: "get", Description: "Get the value of an option"},
 	{Text: "help", Description: "Print out help info"},
@@ -45,6 +46,8 @@ func Complete(d prompt.Document) []prompt.Suggest {
 	switch strings.Split(d.TextBeforeCursor(), " ")[0] {
 	case "connect":
 		return (Connect{}).Complete(d)
+	case "disconnect":
+		return (Disconnect{}).Complete(d)
 	case "download":
 		return (Download{}).Complete(d)
 	case "get":
@@ -74,7 +77,9 @@ func Execute(s string) {
 	cmd := strings.Split(s, " ")
 	switch cmd[0] {
 	case "connect":
-		(Help{}).Execute(cmd[1:]...)
+		(Connect{}).Execute(cmd[1:]...)
+	case "disconnect":
+		(Disconnect{}).Execute(cmd[1:]...)
 	case "download":
 		(Download{}).Execute(cmd[1:]...)
 	case "get":
