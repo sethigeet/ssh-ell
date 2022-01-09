@@ -19,6 +19,7 @@ var Commands = []prompt.Suggest{
 	{Text: "get", Description: "Get the value of an option"},
 	{Text: "help", Description: "Print out help info"},
 	{Text: "set", Description: "Set the value of an option"},
+	{Text: "status", Description: "Get the status of the connection"},
 	{Text: "upload", Description: "Upload a file to the connected server"},
 }
 
@@ -56,6 +57,8 @@ func Complete(d prompt.Document) []prompt.Suggest {
 		return (Help{}).Complete(d)
 	case "set":
 		return (Set{}).Complete(d)
+	case "status":
+		return (Status{}).Complete(d)
 	case "upload":
 		return (Upload{}).Complete(d)
 	}
@@ -88,6 +91,8 @@ func Execute(s string) {
 		(Help{}).Execute(cmd[1:]...)
 	case "set":
 		(Set{}).Execute(cmd[1:]...)
+	case "status":
+		(Status{}).Execute(cmd[1:]...)
 	case "upload":
 		(Upload{}).Execute(cmd[1:]...)
 	default:

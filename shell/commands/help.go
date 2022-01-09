@@ -14,12 +14,14 @@ type Help struct{}
 var helpMessages = map[string]string{
 	"ssh-ell": `Write a generic help message for ssh-ell here`,
 
-	"connect":  `Write a help message for the connect command here`,
-	"download": `Write a help message for the download command here`,
-	"get":      `Write a help message for the get command here`,
-	"help":     `Write a help message for the help command here`,
-	"set":      `Write a help message for the set command here`,
-	"upload":   `Write a help message for the upload command here`,
+	"connect":    `Write a help message for the connect command here`,
+	"disconnect": `Write a help message for the disconnect command here`,
+	"download":   `Write a help message for the download command here`,
+	"get":        `Write a help message for the get command here`,
+	"help":       `Write a help message for the help command here`,
+	"set":        `Write a help message for the set command here`,
+	"status":     `Write a help message for the status command here`,
+	"upload":     `Write a help message for the upload command here`,
 }
 
 func (Help) Complete(d prompt.Document) []prompt.Suggest {

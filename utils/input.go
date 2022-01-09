@@ -32,3 +32,26 @@ func FilePathInput(prefix string, opts ...prompt.Option) string {
 		opts...,
 	)
 }
+
+func YesNoInput(prefix string, opts ...prompt.Option) bool {
+	opts = append(InputOptions, opts...)
+	prefix += " (yes/no) "
+
+	var ok bool
+input:
+	for !ok {
+		res := prompt.Input(prefix, func(d prompt.Document) []prompt.Suggest { return nil }, opts...)
+		switch res {
+		case "yes":
+			ok = true
+			break input
+		case "no":
+			ok = false
+			break input
+		default:
+			continue
+		}
+	}
+
+	return ok
+}

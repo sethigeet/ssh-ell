@@ -18,27 +18,36 @@ type Connection struct {
 	IdentityFilePath string
 
 	AuthMethodCommonName string
+	Connected            bool
 
 	sshClient  *ssh.Client
 	sftpClient *sftp.Client
 }
 
 func (c *Connection) Connect() error {
+	hostKeyCallback, err := GetHostKeyCallback(c)
+	if err != nil {
+		return err
+	}
 	sshClient, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", c.Host, c.Port), &ssh.ClientConfig{
 		User:    c.User,
 		Timeout: c.Timeout,
 		Auth:    []ssh.AuthMethod{c.AuthMethod},
+
+		HostKeyCallback: hostKeyCallback,
 	})
 	if err != nil {
 		return err
 	}
 
 	c.sshClient = sshClient
+	c.Connected = true
 
 	return nil
 }
 
 func (c *Connection) Disconnect() error {
+	c.Connected = false
 	return c.sshClient.Close()
 }
 
