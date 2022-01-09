@@ -3,17 +3,18 @@ package commands
 import (
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/c-bata/go-prompt"
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
+
+	"github.com/sethigeet/ssh-ell/utils"
 )
 
 type Get struct{}
 
 func (Get) Complete(d prompt.Document) []prompt.Suggest {
-	cmd := strings.Split(d.TextBeforeCursor(), " ")
+	cmd := utils.ParseCmd(d.TextBeforeCursor())
 	if len(cmd) > 2 {
 		return nil
 	}
@@ -49,7 +50,7 @@ func (Get) Execute(args ...string) {
 		opt := args[0]
 		switch args[0] {
 		case "authMethod":
-			table.Append([]string{opt, "authmeth"})
+			table.Append([]string{opt, conn.AuthMethodCommonName})
 		case "host":
 			table.Append([]string{opt, conn.Host})
 		case "port":

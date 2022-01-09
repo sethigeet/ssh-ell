@@ -22,7 +22,10 @@ var InputOptions = []prompt.Option{
 }
 
 func FilePathInput(prefix string, opts ...prompt.Option) string {
-	fpCompleter := completer.FilePathCompleter{}
+	fpCompleter := FilePathCompleter{
+		ParseWholeLine: true,
+		IgnoreCase:     true,
+	}
 
 	opts = append(InputOptions, opts...)
 

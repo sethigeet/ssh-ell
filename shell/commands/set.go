@@ -24,7 +24,7 @@ var AuthMethodOptions = []prompt.Suggest{
 }
 
 func (Set) Complete(d prompt.Document) []prompt.Suggest {
-	cmd := strings.Split(d.TextBeforeCursor(), " ")
+	cmd := utils.ParseCmd(d.TextBeforeCursor())
 	if len(cmd) > 2 {
 		if cmd[1] == "authMethod" {
 			return prompt.FilterHasPrefix(AuthMethodOptions, d.GetWordBeforeCursor(), true)

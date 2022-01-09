@@ -10,11 +10,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/c-bata/go-prompt"
-	"github.com/fatih/color"
-	"github.com/sethigeet/ssh-ell/utils"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/knownhosts"
+
+	"github.com/c-bata/go-prompt"
+	"github.com/fatih/color"
+
+	"github.com/sethigeet/ssh-ell/utils"
 )
 
 // GetAuthMethod gets the required auth method for Connection to use to connect

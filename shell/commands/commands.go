@@ -8,7 +8,9 @@ import (
 
 	"github.com/c-bata/go-prompt"
 	"github.com/fatih/color"
+
 	"github.com/sethigeet/ssh-ell/ssh"
+	"github.com/sethigeet/ssh-ell/utils"
 )
 
 // Commands is the list of the commands supported by the shell package
@@ -44,7 +46,7 @@ func Complete(d prompt.Document) []prompt.Suggest {
 		return prompt.FilterHasPrefix(Commands, d.GetWordBeforeCursor(), true)
 	}
 
-	switch strings.Split(d.TextBeforeCursor(), " ")[0] {
+	switch utils.ParseCmd(d.TextBeforeCursor())[0] {
 	case "connect":
 		return (Connect{}).Complete(d)
 	case "disconnect":
@@ -77,7 +79,7 @@ func Execute(s string) {
 		return
 	}
 
-	cmd := strings.Split(s, " ")
+	cmd := utils.ParseCmd(s)
 	switch cmd[0] {
 	case "connect":
 		(Connect{}).Execute(cmd[1:]...)

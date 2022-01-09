@@ -5,8 +5,9 @@ import (
 	"os/user"
 	"time"
 
-	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
+
+	"github.com/pkg/sftp"
 )
 
 type Connection struct {

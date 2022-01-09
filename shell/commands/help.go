@@ -7,6 +7,8 @@ import (
 
 	"github.com/c-bata/go-prompt"
 	"github.com/fatih/color"
+
+	"github.com/sethigeet/ssh-ell/utils"
 )
 
 type Help struct{}
@@ -25,7 +27,7 @@ var helpMessages = map[string]string{
 }
 
 func (Help) Complete(d prompt.Document) []prompt.Suggest {
-	cmd := strings.Split(d.TextBeforeCursor(), " ")
+	cmd := utils.ParseCmd(d.TextBeforeCursor())
 	if len(cmd) > 2 {
 		return nil
 	}

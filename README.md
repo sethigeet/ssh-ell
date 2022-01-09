@@ -7,3 +7,4 @@
 - [ ] Add support for forwarding ports
 - [ ] Make the shell history persistent
 - [ ] Add the ability to store connection profiles and load any one
+- [ ] Add the ability to create key pairs for connecting securely without a password
