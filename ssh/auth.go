@@ -48,15 +48,7 @@ func getKeyAuth(args ...string) (ssh.AuthMethod, error) {
 	}
 
 	// Get the absolute path of the file
-	identityFilePath := args[0]
-	if strings.HasPrefix(identityFilePath, "~") {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return nil, err
-		}
-		identityFilePath = strings.Replace(identityFilePath, "~", homeDir, 1)
-	}
-	identityFilePath, err := filepath.Abs(identityFilePath)
+	identityFilePath, err := utils.GetAbsPath(args[0])
 	if err != nil {
 		return nil, fmt.Errorf("unable to read private key: %v", err)
 	}

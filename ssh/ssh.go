@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"golang.org/x/crypto/ssh"
-
-	"github.com/pkg/sftp"
 )
 
 type Connection struct {
@@ -21,8 +19,7 @@ type Connection struct {
 	AuthMethodCommonName string
 	Connected            bool
 
-	sshClient  *ssh.Client
-	sftpClient *sftp.Client
+	sshClient *ssh.Client
 }
 
 func (c *Connection) Connect() error {
@@ -67,10 +64,6 @@ func (c *Connection) ApplyDefaults() error {
 	c.Port = 22
 
 	c.Timeout = time.Millisecond * 5000
-
-	// TODO: Remove this
-	c.Host = "localhost"
-	c.AuthMethod, _ = getPassowrdAuth("geet")
 
 	return nil
 }
