@@ -42,6 +42,11 @@ func (Set) Execute(args ...string) {
 		return
 	}
 
+	if conn.Connected {
+		color.New(color.FgRed, color.Bold).Fprintf(os.Stderr, "You cannot set options while you are connected to a host!\n")
+		return
+	}
+
 	val := strings.Join(args[1:], " ")
 	switch args[0] {
 	case "authMethod":

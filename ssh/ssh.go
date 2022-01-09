@@ -43,11 +43,16 @@ func (c *Connection) Connect() error {
 	c.sshClient = sshClient
 	c.Connected = true
 
+	go func(conn *Connection) {
+		conn.sshClient.Wait()
+
+		conn.Connected = false
+	}(c)
+
 	return nil
 }
 
 func (c *Connection) Disconnect() error {
-	c.Connected = false
 	return c.sshClient.Close()
 }
 
@@ -61,6 +66,10 @@ func (c *Connection) ApplyDefaults() error {
 	c.Port = 22
 
 	c.Timeout = time.Millisecond * 5000
+
+	// TODO: Remove this
+	c.Host = "localhost"
+	c.AuthMethod, _ = getPassowrdAuth("geet")
 
 	return nil
 }

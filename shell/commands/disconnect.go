@@ -20,6 +20,11 @@ func (Disconnect) Execute(args ...string) {
 		return
 	}
 
+	if !conn.Connected {
+		color.New(color.FgRed, color.Bold).Fprintf(os.Stderr, "You are not connected to any host!\n")
+		return
+	}
+
 	err := conn.Disconnect()
 	if err != nil {
 		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "An error occurred while trying to disconnect")

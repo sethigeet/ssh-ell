@@ -20,6 +20,11 @@ func (Connect) Execute(args ...string) {
 		return
 	}
 
+	if conn.Connected {
+		color.New(color.FgRed, color.Bold).Fprintf(os.Stderr, "You are already connected to %q!\n", conn.Host)
+		return
+	}
+
 	err := conn.Connect()
 	if err != nil {
 		color.New(color.FgRed, color.Bold).Fprintf(os.Stderr, "An error occurred while trying to connect to %q\n", conn.Host)
