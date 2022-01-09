@@ -14,7 +14,7 @@ func (Connect) Complete(d prompt.Document) []prompt.Suggest {
 }
 
 func (Connect) Execute(args ...string) {
-	if len(args) > 0 {
+	if len(args) != 0 {
 		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid number of args specified")
 		color.New(color.FgRed).Fprintln(os.Stderr, "The connect command does not take any args")
 		return

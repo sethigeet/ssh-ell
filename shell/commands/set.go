@@ -36,8 +36,8 @@ func (Set) Complete(d prompt.Document) []prompt.Suggest {
 }
 
 func (Set) Execute(args ...string) {
-	if len(args) == 1 {
-		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Value not specified")
+	if len(args) != 2 {
+		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid args specified")
 		color.New(color.FgRed).Fprintln(os.Stderr, "The set command take two arguments, the first being the option and the second being the value.")
 		return
 	}
