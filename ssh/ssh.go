@@ -2,10 +2,12 @@ package ssh
 
 import (
 	"fmt"
+	"os"
 	"os/user"
 	"time"
 
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 type Connection struct {
@@ -15,6 +17,7 @@ type Connection struct {
 	Timeout          time.Duration
 	AuthMethod       ssh.AuthMethod
 	IdentityFilePath string
+	TerminalName     string
 
 	AuthMethodCommonName string
 	Connected            bool
@@ -64,6 +67,48 @@ func (c *Connection) ApplyDefaults() error {
 	c.Port = 22
 
 	c.Timeout = time.Millisecond * 5000
+
+	c.TerminalName = "xterm-256color"
+
+	// TODO: Remove this
+	c.Host = "localhost"
+	c.AuthMethod, _ = getPassowrdAuth("geet")
+
+	return nil
+}
+
+func (c *Connection) Shell() error {
+	sess, err := c.sshClient.NewSession()
+	if err != nil {
+		return err
+	}
+	defer sess.Close()
+
+	// set the pipes
+	sess.Stdin = os.Stdin
+	sess.Stdout = os.Stdout
+	sess.Stderr = os.Stderr
+
+	// request a psedo tty
+	width, height, err := terminal.GetSize(0)
+	if err != nil {
+		return err
+	}
+	if err := sess.RequestPty(c.TerminalName, height, width, ssh.TerminalModes{
+		ssh.ECHO:          0,
+		ssh.TTY_OP_ISPEED: 14400,
+		ssh.TTY_OP_OSPEED: 14400,
+	}); err != nil {
+		return err
+	}
+
+	if err := sess.Shell(); err != nil {
+		return err
+	}
+
+	if err := sess.Wait(); err != nil {
+		return err
+	}
 
 	return nil
 }

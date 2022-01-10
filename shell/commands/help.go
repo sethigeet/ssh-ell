@@ -22,6 +22,7 @@ var helpMessages = map[string]string{
 	"get":        `Write a help message for the get command here`,
 	"help":       `Write a help message for the help command here`,
 	"set":        `Write a help message for the set command here`,
+	"shell":      `Write a help message for the shell command here`,
 	"status":     `Write a help message for the status command here`,
 	"upload":     `Write a help message for the upload command here`,
 }

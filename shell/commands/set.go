@@ -18,11 +18,6 @@ import (
 
 type Set struct{}
 
-var AuthMethodOptions = []prompt.Suggest{
-	{Text: "key", Description: "Use a key based authentication for ssh"},
-	{Text: "password", Description: "Use password based authentication for ssh"},
-}
-
 func (Set) Complete(d prompt.Document) []prompt.Suggest {
 	cmd := utils.ParseCmd(d.TextBeforeCursor())
 	if len(cmd) > 2 {
@@ -90,6 +85,8 @@ func (Set) Execute(args ...string) {
 			color.New(color.FgRed).Fprintln(os.Stderr, "The value of port must a valid positive interger")
 		}
 		conn.Port = uint16(port)
+	case "terminalName":
+		conn.TerminalName = val
 	case "timeout":
 		timeout, err := strconv.Atoi(val)
 		if err != nil {

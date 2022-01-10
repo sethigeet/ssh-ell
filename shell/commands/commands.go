@@ -13,28 +13,6 @@ import (
 	"github.com/sethigeet/ssh-ell/utils"
 )
 
-// Commands is the list of the commands supported by the shell package
-var Commands = []prompt.Suggest{
-	{Text: "connect", Description: "Connect using the set options"},
-	{Text: "disconnect", Description: "Disconnect from the ssh connection"},
-	{Text: "download", Description: "Download a file from the connected server"},
-	{Text: "get", Description: "Get the value of an option"},
-	{Text: "help", Description: "Print out help info"},
-	{Text: "set", Description: "Set the value of an option"},
-	{Text: "status", Description: "Get the status of the connection"},
-	{Text: "upload", Description: "Upload a file to the connected server"},
-}
-
-// Options is the list of options supported by the `set` and `get` commands
-// which set and get the options required by other commands
-var Options = []prompt.Suggest{
-	{Text: "authMethod", Description: "The auth method you want to use to connect to the host"},
-	{Text: "host", Description: "The host you want to connect to"},
-	{Text: "port", Description: "The port of the host to which you want to connect to"},
-	{Text: "timeout", Description: "The timeout for the ssh connection"},
-	{Text: "user", Description: "The user on the host to which you want to connect to"},
-}
-
 var conn = &ssh.Connection{}
 
 func init() {
@@ -59,6 +37,8 @@ func Complete(d prompt.Document) []prompt.Suggest {
 		return (Help{}).Complete(d)
 	case "set":
 		return (Set{}).Complete(d)
+	case "shell":
+		return (Shell{}).Complete(d)
 	case "status":
 		return (Status{}).Complete(d)
 	case "upload":
@@ -95,6 +75,8 @@ func Execute(s string) {
 		(Set{}).Execute(cmd[1:]...)
 	case "status":
 		(Status{}).Execute(cmd[1:]...)
+	case "shell":
+		(Shell{}).Execute(cmd[1:]...)
 	case "upload":
 		(Upload{}).Execute(cmd[1:]...)
 	default:

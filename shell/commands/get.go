@@ -43,6 +43,7 @@ func (Get) Execute(args ...string) {
 			{"authMethod", conn.AuthMethodCommonName},
 			{"host", conn.Host},
 			{"port", strconv.Itoa(int(conn.Port))},
+			{"terminalName", conn.TerminalName},
 			{"timeout", conn.Timeout.String()},
 			{"user", conn.User},
 		})
@@ -55,6 +56,8 @@ func (Get) Execute(args ...string) {
 			table.Append([]string{opt, conn.Host})
 		case "port":
 			table.Append([]string{opt, strconv.Itoa(int(conn.Port))})
+		case "terminalName":
+			table.Append([]string{opt, conn.TerminalName})
 		case "timeout":
 			table.Append([]string{opt, conn.Timeout.String()})
 		case "user":
