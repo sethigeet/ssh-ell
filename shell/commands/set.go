@@ -1,104 +1,59 @@
 package commands
 
 import (
-	"fmt"
 	"os"
-	"strconv"
 	"strings"
-	"syscall"
-	"time"
 
 	"github.com/c-bata/go-prompt"
 	"github.com/fatih/color"
-	"golang.org/x/term"
 
-	"github.com/sethigeet/ssh-ell/ssh"
+	"github.com/sethigeet/ssh-ell/shell/commands/options"
 	"github.com/sethigeet/ssh-ell/utils"
 )
 
-type Set struct{}
+var Set = &Command{
+	Name:    "set",
+	Desc:    "Set the value of an option",
+	HelpMsg: `Write a help message for the set command here`,
 
-func (Set) Complete(d prompt.Document) []prompt.Suggest {
-	cmd := utils.ParseCmd(d.TextBeforeCursor())
-	if len(cmd) > 2 {
-		if cmd[1] == "authMethod" {
-			return prompt.FilterHasPrefix(AuthMethodOptions, d.GetWordBeforeCursor(), true)
+	Complete: func(d prompt.Document) []prompt.Suggest {
+		cmd := utils.ParseCmd(d.TextBeforeCursor())
+		if len(cmd) > 3 {
+			return nil
 		}
-		return nil
-	}
 
-	return prompt.FilterHasPrefix(Options, d.GetWordBeforeCursor(), true)
-}
-
-func (Set) Execute(args ...string) {
-	if len(args) != 2 {
-		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid args specified")
-		color.New(color.FgRed).Fprintln(os.Stderr, "The set command take two arguments, the first being the option and the second being the value.")
-		return
-	}
-
-	if conn.Connected {
-		color.New(color.FgRed, color.Bold).Fprintf(os.Stderr, "You cannot set options while you are connected to a host!\n")
-		return
-	}
-
-	val := strings.Join(args[1:], " ")
-	switch args[0] {
-	case "authMethod":
-		var methArg string
-		switch val {
-		case "password":
-			color.New(color.FgCyan, color.Bold).Printf("Enter the passowrd: ")
-			passwd, err := term.ReadPassword(int(syscall.Stdin))
-			if err != nil {
-				color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "An error occurred while retreiving the passowrd")
-				color.New(color.FgRed).Fprintf(os.Stderr, "error: %s\n", err)
+		if len(cmd) == 3 {
+			if cmd[1] == "authMethod" {
+				return prompt.FilterHasPrefix(options.AuthMethodOptions, d.GetWordBeforeCursor(), true)
 			}
-			fmt.Printf("\n")
-			methArg = string(passwd)
-			conn.AuthMethodCommonName = "password"
-		case "key":
-			methArg = utils.FilePathInput(
-				"Enter the path to the private key file: ",
-				prompt.OptionPrefixTextColor(prompt.Cyan),
-			)
-			conn.AuthMethodCommonName = "key"
-		default:
-			color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid `authMethod` specified")
-			color.New(color.FgRed).Fprintln(os.Stderr, "Run `help set` to see what values can be set for all options!")
+			return nil
+		}
+
+		return prompt.FilterHasPrefix(options.GetOptCompletionItems(), d.GetWordBeforeCursor(), true)
+	},
+
+	Execute: func(args ...string) {
+		if len(args) != 2 {
+			color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid args specified")
+			color.New(color.FgRed).Fprintln(os.Stderr, "The set command take two arguments, the first being the option and the second being the value.")
 			return
 		}
 
-		meth, err := ssh.GetAuthMethod(val, methArg)
+		if conn.Connected {
+			color.New(color.FgRed, color.Bold).Fprintf(os.Stderr, "You cannot set options while you are connected to a host!\n")
+			return
+		}
+
+		opt := options.GetOptByName(args[0])
+		if opt == nil {
+			color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid option specified")
+			color.New(color.FgRed).Fprintln(os.Stderr, "Run `help set` to see the options that you can set!")
+			return
+		}
+		err := opt.Set(strings.Join(args[1:], " "), conn)
 		if err != nil {
-			color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "An error occurred while setting the `authMethod`")
+			color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "An error occurred while setting the option")
 			color.New(color.FgRed).Fprintf(os.Stderr, "error: %s\n", err)
-			return
 		}
-		conn.AuthMethod = meth
-	case "host":
-		conn.Host = val
-	case "port":
-		port, err := strconv.Atoi(val)
-		if err != nil {
-			color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid value for port specified")
-			color.New(color.FgRed).Fprintln(os.Stderr, "The value of port must a valid positive interger")
-		}
-		conn.Port = uint16(port)
-	case "terminalName":
-		conn.TerminalName = val
-	case "timeout":
-		timeout, err := strconv.Atoi(val)
-		if err != nil {
-			color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid value for timeout specified")
-			color.New(color.FgRed).Fprintln(os.Stderr, "The value of timout must a valid positive interger")
-		}
-		conn.Timeout = time.Second * time.Duration(timeout)
-	case "user":
-		conn.User = val
-	default:
-		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid option specified")
-		color.New(color.FgRed).Fprintln(os.Stderr, "Run `help set` to see the options that you can set!")
-	}
-
+	},
 }

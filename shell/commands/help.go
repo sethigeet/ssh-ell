@@ -11,56 +11,57 @@ import (
 	"github.com/sethigeet/ssh-ell/utils"
 )
 
-type Help struct{}
+var helpMessage = `Write a generic help message for ssh-ell here`
 
-var helpMessages = map[string]string{
-	"ssh-ell": `Write a generic help message for ssh-ell here`,
+var Help = &Command{
+	Name:    "help",
+	Desc:    "Print out help info",
+	HelpMsg: `Write a help message for the help command here`,
 
-	"connect":    `Write a help message for the connect command here`,
-	"disconnect": `Write a help message for the disconnect command here`,
-	"download":   `Write a help message for the download command here`,
-	"get":        `Write a help message for the get command here`,
-	"help":       `Write a help message for the help command here`,
-	"set":        `Write a help message for the set command here`,
-	"shell":      `Write a help message for the shell command here`,
-	"status":     `Write a help message for the status command here`,
-	"upload":     `Write a help message for the upload command here`,
-}
+	Complete: func(d prompt.Document) []prompt.Suggest {
+		cmd := utils.ParseCmd(d.TextBeforeCursor())
+		if len(cmd) > 2 {
+			return nil
+		}
 
-func (Help) Complete(d prompt.Document) []prompt.Suggest {
-	cmd := utils.ParseCmd(d.TextBeforeCursor())
-	if len(cmd) > 2 {
-		return nil
-	}
+		return prompt.FilterHasPrefix(
+			append(GetCmdCompletionItems(Commands), prompt.Suggest{Text: "help", Description: "Print out help info"}),
+			d.GetWordBeforeCursor(),
+			true,
+		)
+	},
 
-	return prompt.FilterHasPrefix(Commands, d.GetWordBeforeCursor(), true)
-}
+	Execute: func(args ...string) {
+		if len(args) > 1 {
+			color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid args specified")
+			color.New(color.FgRed).Fprintln(os.Stderr, "The help command can only take one arg at max!")
+			return
+		}
 
-func (Help) Execute(args ...string) {
-	if len(args) > 1 {
-		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid args specified")
-		color.New(color.FgRed).Fprintln(os.Stderr, "The help command can only take one arg at max!")
-		return
-	}
+		printHeader := func(name, msg string) {
+			header := fmt.Sprintf("Help for %s:", name)
+			color.New(color.FgGreen, color.Bold).Println(header)
+			log := color.New(color.FgGreen)
+			log.Println(strings.Repeat("-", len(header)))
+			log.Println(msg)
+		}
 
-	var cmd string
-	if len(args) == 0 {
-		cmd = "ssh-ell"
-	} else {
-		cmd = args[0]
-	}
+		if len(args) == 0 {
+			printHeader("ssh-ell", helpMessage)
+			return
+		}
 
-	helpMessage, exists := helpMessages[cmd]
+		if args[0] == "help" {
+			printHeader("help", `Write a help message for the help command here`)
+		}
 
-	if !exists {
-		color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid command specified")
-		color.New(color.FgRed).Fprintln(os.Stderr, "Please ask for help for a command that exists!")
-		return
-	}
+		cmd := GetCmdByName(Commands, args[0])
+		if cmd == nil {
+			color.New(color.FgRed, color.Bold).Fprintln(os.Stderr, "Invalid command specified")
+			color.New(color.FgRed).Fprintln(os.Stderr, "Please ask for help for a command that exists!")
+			return
+		}
 
-	header := fmt.Sprintf("Help for %s:", cmd)
-	color.New(color.FgGreen, color.Bold).Println(header)
-	log := color.New(color.FgGreen)
-	log.Println(strings.Repeat("-", len(header)))
-	log.Println(helpMessage)
+		printHeader(cmd.Name, cmd.HelpMsg)
+	},
 }

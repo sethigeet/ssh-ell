@@ -70,10 +70,6 @@ func (c *Connection) ApplyDefaults() error {
 
 	c.TerminalName = "xterm-256color"
 
-	// TODO: Remove this
-	c.Host = "localhost"
-	c.AuthMethod, _ = getPassowrdAuth("geet")
-
 	return nil
 }
 
