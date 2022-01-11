@@ -26,4 +26,8 @@ var Timeout = &Option{
 
 		return nil
 	},
+
+	Validate: func(conn *ssh.Connection) bool {
+		return conn.Timeout != 0
+	},
 }

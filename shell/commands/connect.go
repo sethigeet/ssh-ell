@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/fatih/color"
+	"github.com/sethigeet/ssh-ell/shell/commands/options"
 )
 
 var Connect = &Command{
@@ -23,7 +24,14 @@ var Connect = &Command{
 			return
 		}
 
-		err := conn.Connect()
+		err := options.ValidateAllOpts(conn)
+		if err != nil {
+			color.New(color.FgRed, color.Bold).Fprintf(os.Stderr, "An error occurred while trying to connect to %q\n", conn.Host)
+			color.New(color.FgRed).Fprintf(os.Stderr, "error: %s\n", err)
+			return
+		}
+
+		err = conn.Connect()
 		if err != nil {
 			color.New(color.FgRed, color.Bold).Fprintf(os.Stderr, "An error occurred while trying to connect to %q\n", conn.Host)
 			color.New(color.FgRed).Fprintf(os.Stderr, "error: %s\n", err)

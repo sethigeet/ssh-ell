@@ -8,8 +8,9 @@ import (
 type Option struct {
 	Name, Desc string
 
-	Set func(val string, conn *ssh.Connection) error
-	Get func(conn *ssh.Connection) string
+	Set      func(val string, conn *ssh.Connection) error
+	Get      func(conn *ssh.Connection) string
+	Validate func(conn *ssh.Connection) bool
 }
 
 func (opt *Option) GetSuggestion() prompt.Suggest {

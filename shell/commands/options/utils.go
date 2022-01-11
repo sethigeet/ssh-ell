@@ -1,6 +1,11 @@
 package options
 
-import "github.com/c-bata/go-prompt"
+import (
+	"fmt"
+
+	"github.com/c-bata/go-prompt"
+	"github.com/sethigeet/ssh-ell/ssh"
+)
 
 func GetOptByName(name string) *Option {
 	for _, cmd := range Options {
@@ -20,4 +25,15 @@ func GetOptCompletionItems() []prompt.Suggest {
 	}
 
 	return suggestions
+}
+
+func ValidateAllOpts(conn *ssh.Connection) error {
+	for _, opt := range Options {
+		isValid := opt.Validate(conn)
+		if !isValid {
+			return fmt.Errorf("the %s option must be set", opt.Name)
+		}
+	}
+
+	return nil
 }

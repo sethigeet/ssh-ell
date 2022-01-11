@@ -25,4 +25,8 @@ var Port = &Option{
 
 		return nil
 	},
+
+	Validate: func(conn *ssh.Connection) bool {
+		return conn.Port != 0
+	},
 }

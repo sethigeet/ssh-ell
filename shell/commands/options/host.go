@@ -20,4 +20,8 @@ var Host = &Option{
 		conn.Host = val
 		return nil
 	},
+
+	Validate: func(conn *ssh.Connection) bool {
+		return conn.Host != ""
+	},
 }

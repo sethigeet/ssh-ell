@@ -56,4 +56,8 @@ var AuthMethod = &Option{
 
 		return nil
 	},
+
+	Validate: func(conn *ssh.Connection) bool {
+		return conn.AuthMethod != nil
+	},
 }
